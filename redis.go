@@ -3,7 +3,7 @@ package rdb
 import (
 	"context"
 	"errors"
-	"github.com/preceeder/go/base"
+	"github.com/preceeder/go.base"
 	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"time"

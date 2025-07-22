@@ -2,7 +2,7 @@ package rdb
 
 import (
 	"fmt"
-	"github.com/preceeder/go/base"
+	"github.com/preceeder/go.base"
 	"testing"
 	"time"
 )

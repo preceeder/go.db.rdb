@@ -3,7 +3,7 @@ package rdb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/preceeder/go/base"
+	"github.com/preceeder/go.base"
 	"testing"
 	"time"
 )

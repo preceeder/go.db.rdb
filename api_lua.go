@@ -3,7 +3,7 @@ package rdb
 import (
 	"fmt"
 	"github.com/duke-git/lancet/v2/cryptor"
-	"github.com/preceeder/go/base"
+	"github.com/preceeder/go.base"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

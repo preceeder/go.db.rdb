@@ -1,7 +1,7 @@
 package rdb
 
 import (
-	"github.com/preceeder/go/base"
+	"github.com/preceeder/go.base"
 	"github.com/redis/go-redis/v9"
 )
 
