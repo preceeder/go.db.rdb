@@ -16,10 +16,10 @@ func TestRedisClient_ZRange(t *testing.T) {
 		fmt.Println(cmd.Err())
 		return
 	}
-	fmt.Println(cmd.Val())
 
-	cmd = client.ZRange(base.Context{}, ade, map[string]any{"start": 0, "stop": -1})
 	fmt.Println(cmd.Val())
+	cmd = client.ZRange(base.Context{}, ade, map[string]any{"start": 0, "stop": -1})
+	fmt.Println(cmd.Slice())
 }
 
 var ade = RdCmd{
@@ -32,7 +32,7 @@ var ade = RdCmd{
 			},
 		},
 		ZRANGE: {
-			Params: "{{start}} {{stop}} WITHSCORES",
+			Params: "{{start}} {{stop}}", //  WITHSCORES
 		},
 	},
 }
