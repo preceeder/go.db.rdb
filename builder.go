@@ -22,6 +22,7 @@ type RdSubCmd struct {
 
 // RedisCmdBuilder 用于构建 Redis 命令的结构体
 type RdCmd struct {
+	DB  string // 这里只是一个标记，没作用
 	Key string
 	CMD map[Command]RdSubCmd
 }
