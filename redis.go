@@ -23,7 +23,7 @@ type Config struct {
 	MaxIdle     int    `json:"maxIdle" yaml:"maxIdle"`
 	MinIdle     int    `json:"minIdle" yaml:"minIdle"`
 	IdleTimeout int    `json:"idleTimeout" yaml:"idleTimeout"`
-	PoolSize    int    `json:"PoolSize" yaml:"PoolSize"`
+	PoolSize    int    `json:"poolSize" yaml:"poolSize"`
 }
 
 type RedisClient struct {
