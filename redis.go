@@ -18,6 +18,7 @@ type Config struct {
 	Host        string `json:"host"`
 	Port        string `json:"port"`
 	Password    string `json:"password"`
+	UserName    string `json:"username"`
 	Db          int    `json:"db"`
 	MaxIdle     int    `json:"maxIdle"`
 	MinIdle     int    `json:"minIdle"`
@@ -46,6 +47,7 @@ func initRedis(c Config) *redis.Client {
 	redisOpt := &redis.Options{
 		Addr:         addr,
 		Password:     c.Password,
+		Username:     c.UserName,
 		DB:           c.Db,
 		PoolSize:     c.PoolSize,
 		MaxIdleConns: c.MaxIdle,
