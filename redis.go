@@ -15,15 +15,15 @@ type builder func(ctx base.BaseContext, cmd RdCmd, cmdName Command, args map[str
 // lua脚本
 type lua func(ctx base.BaseContext, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd
 type Config struct {
-	Host        string `json:"host"`
-	Port        string `json:"port"`
-	Password    string `json:"password"`
-	UserName    string `json:"username"`
-	Db          int    `json:"db"`
-	MaxIdle     int    `json:"maxIdle"`
-	MinIdle     int    `json:"minIdle"`
-	IdleTimeout int    `json:"idleTimeout"`
-	PoolSize    int    `json:"PoolSize"`
+	Host        string `json:"host" yaml:"host"`
+	Port        string `json:"port" yaml:"port"`
+	Password    string `json:"password" yaml:"password"`
+	UserName    string `json:"username" yaml:"username"`
+	Db          int    `json:"db" yaml:"db"`
+	MaxIdle     int    `json:"maxIdle" yaml:"maxIdle"`
+	MinIdle     int    `json:"minIdle" yaml:"minIdle"`
+	IdleTimeout int    `json:"idleTimeout" yaml:"idleTimeout"`
+	PoolSize    int    `json:"PoolSize" yaml:"PoolSize"`
 }
 
 type RedisClient struct {
