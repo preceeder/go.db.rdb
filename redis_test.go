@@ -38,8 +38,8 @@ func InitRedis() *RedisClient {
 	config := Config{
 		Host:        "127.0.0.1",
 		Port:        "16379",
-		Password:    "Yanglei@123",
-		UserName:    "r-bp1d037be02u041s2z",
+		Password:    "",
+		UserName:    "",
 		Db:          13,
 		MaxIdle:     2,
 		IdleTimeout: 240,
