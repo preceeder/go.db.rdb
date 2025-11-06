@@ -37,8 +37,9 @@ var UserWealthCmd = RdCmd{
 func InitRedis() *RedisClient {
 	config := Config{
 		Host:        "127.0.0.1",
-		Port:        "6377",
-		Password:    "QDjk9UdkoD6cv",
+		Port:        "16379",
+		Password:    "Yanglei@123",
+		UserName:    "r-bp1d037be02u041s2z",
 		Db:          13,
 		MaxIdle:     2,
 		IdleTimeout: 240,

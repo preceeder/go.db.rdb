@@ -1,12 +1,20 @@
 package rdb
 
 import (
+	"context"
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
-	"github.com/duke-git/lancet/v2/cryptor"
-	"github.com/preceeder/go.base"
 	"github.com/redis/go-redis/v9"
 	"time"
 )
+
+// sha1String 计算字符串的 SHA1 哈希值并返回十六进制字符串
+func sha1String(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	return hex.EncodeToString(h.Sum(nil))
+}
 
 type LuaScript struct {
 	DB      string
@@ -18,15 +26,15 @@ type LuaScript struct {
 
 // 缓存Lua脚本到redis
 // return 给定脚本的 SHA1 校验和
-func (rdm RedisClient) ScriptLoad(ctx base.BaseContext, lua string) string {
+func (rdm RedisClient) ScriptLoad(ctx context.Context, lua string) string {
 	cmd := rdm.Client.ScriptLoad(ctx, lua)
 	//hesHasScript := cryptor.Sha1(lua)
 	return cmd.Val()
 }
 
 // 这里还需要实验一下
-func (rdm RedisClient) EvalSha(ctx base.BaseContext, lua string, keys []string, values []any) *redis.Cmd {
-	hesHasScript := cryptor.Sha1(lua)
+func (rdm RedisClient) EvalSha(ctx context.Context, lua string, keys []string, values []any) *redis.Cmd {
+	hesHasScript := sha1String(lua)
 	cmd := rdm.Client.EvalSha(ctx, hesHasScript, keys, values)
 	if cmd.Err() != nil {
 		if redis.HasErrorPrefix(cmd.Err(), "NOSCRIPT") {
@@ -39,7 +47,7 @@ func (rdm RedisClient) EvalSha(ctx base.BaseContext, lua string, keys []string, 
 	return cmd
 }
 
-func (rdm RedisClient) ExecScript(ctx base.BaseContext, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd {
+func (rdm RedisClient) ExecScript(ctx context.Context, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd {
 	var defaultData map[string]any = make(map[string]any)
 	if len(lua.Default) > 0 {
 		defaultData = handlerDefaultValue(lua.Default)
@@ -65,15 +73,15 @@ func (rdm RedisClient) ExecScript(ctx base.BaseContext, lua LuaScript, keyInfo m
 // PipeLine 的专属
 // 缓存Lua脚本到redis
 // return 给定脚本的 SHA1 校验和
-func (rdm RedisPipeline) ScriptLoad(ctx base.BaseContext, lua string) string {
+func (rdm RedisPipeline) ScriptLoad(ctx context.Context, lua string) string {
 	cmd := rdm.Client.ScriptLoad(ctx, lua)
 	//hesHasScript := cryptor.Sha1(lua)
 	return cmd.Val()
 }
 
 // 这里还需要实验一下
-func (rdm RedisPipeline) EvalSha(ctx base.BaseContext, lua string, keys []string, values []any) *redis.Cmd {
-	hesHasScript := cryptor.Sha1(lua)
+func (rdm RedisPipeline) EvalSha(ctx context.Context, lua string, keys []string, values []any) *redis.Cmd {
+	hesHasScript := sha1String(lua)
 	cmd := rdm.Client.EvalSha(ctx, hesHasScript, keys, values)
 	if cmd.Err() != nil {
 		if redis.HasErrorPrefix(cmd.Err(), "NOSCRIPT") {
@@ -86,7 +94,7 @@ func (rdm RedisPipeline) EvalSha(ctx base.BaseContext, lua string, keys []string
 	return cmd
 }
 
-func (rdm RedisPipeline) ExecScript(ctx base.BaseContext, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd {
+func (rdm RedisPipeline) ExecScript(ctx context.Context, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd {
 	var defaultData map[string]any = make(map[string]any)
 	if len(lua.Default) > 0 {
 		defaultData = handlerDefaultValue(lua.Default)

@@ -3,17 +3,16 @@ package rdb
 import (
 	"context"
 	"errors"
-	"github.com/preceeder/go.base"
 	"github.com/redis/go-redis/v9"
 	"log/slog"
 	"time"
 )
 
 // 普通指令
-type builder func(ctx base.BaseContext, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *redis.Cmd
+type builder func(ctx context.Context, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *redis.Cmd
 
 // lua脚本
-type lua func(ctx base.BaseContext, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd
+type lua func(ctx context.Context, lua LuaScript, keyInfo map[string]string, valueInfo map[string]any) *redis.Cmd
 type Config struct {
 	Host        string `json:"host" yaml:"host"`
 	Port        string `json:"port" yaml:"port"`
@@ -72,7 +71,7 @@ func (rdm RedisClient) RedisClose() {
 	}
 }
 
-func (rdm RedisClient) Handler(ctx base.BaseContext, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (rdm RedisClient) Handler(ctx context.Context, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *redis.Cmd {
 	cmdList, key, subCmd := Build(ctx, cmd, cmdName, args, includeArgs...)
 	resultCmd := rdm.Client.Do(ctx, cmdList...)
 	// 如果是 nil 且不返回的话就处理一下
@@ -85,7 +84,7 @@ func (rdm RedisClient) Handler(ctx base.BaseContext, cmd RdCmd, cmdName Command,
 	return resultCmd
 }
 
-func (rdm RedisClient) setExp(ctx base.BaseContext, key string, subCmd RdSubCmd) {
+func (rdm RedisClient) setExp(ctx context.Context, key string, subCmd RdSubCmd) {
 	if subCmd.Exp != nil {
 		exp := subCmd.Exp()
 		expireCmd := rdm.Client.Expire(ctx, key, exp)

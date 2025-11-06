@@ -1,45 +1,45 @@
 package rdb
 
 import (
-	"github.com/preceeder/go.base"
+	"context"
 	"github.com/redis/go-redis/v9"
 )
 
 // LINDEX key index, 用于获取列表中指定索引位置上的元素
-func (b builder) LIndex(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LIndex(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LINDEX, args, includeArgs...)
 }
 
 // LINSERT key BEFORE|AFTER pivot value , 将值 value 插入到列表 key 当中，位于值 pivot 之前或之后,
 // 在列表的元素前或者后插入元素,当指定元素不存在于列表中时，不执行任何操作
 // LINSERT mylist BEFORE "World" "There"
-func (b builder) LInsert(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LInsert(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LINSERT, args, includeArgs...)
 }
 
 // LLEN mylist , 获取列表中元素数量
-func (b builder) LLen(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LLen(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LLEN, args, includeArgs...)
 }
 
 // LPUSH mylist value [value2 ...] , 将一个或多个值插入到列表头部, 如果 key 不存在，一个空列表会被创建并执行 LPUSH 操作
-func (b builder) LPush(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LPush(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LPUSH, args, includeArgs...)
 }
 
 // LPUSHX mylist value [value2 ...] , 将一个或多个值插入到列表头部, 列表不存在时操作无效
-func (b builder) LPushx(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LPushx(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LPUSHX, args, includeArgs...)
 }
 
 // LPOP mylist , 移出并获取列表的第一个元素
-func (b builder) LPop(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LPop(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LPOP, args, includeArgs...)
 }
 
 // LRANGE mylist start stop, 获取列表指定范围内的元素
 // 其中 0 表示列表的第一个元素， 1 表示列表的第二个元素，以此类推。 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
-func (b builder) LRange(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LRange(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LRANGE, args, includeArgs...)
 }
 
@@ -49,40 +49,40 @@ func (b builder) LRange(ctx base.BaseContext, cmd RdCmd, args map[string]any, in
 // count < 0 : 从表尾开始向表头搜索，移除与 VALUE 相等的元素，数量为 COUNT 的绝对值。
 // count = 0 : 移除表中所有与 VALUE 相等的值。
 // return 被移除元素的数量。 列表不存在时返回 0 。
-func (b builder) LRem(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LRem(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LREM, args, includeArgs...)
 }
 
 // LSET key index value,  当索引参数超出范围，或对一个空列表进行 LSET 时，返回一个错误。
-func (b builder) LSet(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LSet(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LSET, args, includeArgs...)
 }
 
 // LTRIM key start stop, 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素([start, stop])，不在指定区间之内的元素都将被删除。
 // 下标 0 表示列表的第一个元素，以 1 表示列表的第二个元素，以此类推。 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。
-func (b builder) LTrim(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) LTrim(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, LTRIM, args, includeArgs...)
 }
 
 // RPOP key, 移除列表的最后一个元素，返回值为移除的元素。
-func (b builder) RPop(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) RPop(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, RPOP, args, includeArgs...)
 }
 
 // RPOPLPUSH source target, 移除列表的最后一个元素，并将该元素添加到另一个列表并返回
 // return 返回这个元素
-func (b builder) RPopLPush(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) RPopLPush(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, RPOPLPUSH, args, includeArgs...)
 }
 
 // RPUSH key value [value2 ...], 在列表中添加一个或多个值到列表尾部
 // return 执行 RPUSH 操作后，列表的长度。
-func (b builder) RPush(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) RPush(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, RPUSH, args, includeArgs...)
 }
 
 // RPUSHX key value [value2 ...], 将值插入到已存在的列表尾部(最右边)。如果列表不存在，操作无效。
 // return 执行 Rpushx 操作后，列表的长度。
-func (b builder) RPushx(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) RPushx(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, RPUSHX, args, includeArgs...)
 }

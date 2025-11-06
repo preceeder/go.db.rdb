@@ -1,25 +1,25 @@
 package rdb
 
 import (
-	"github.com/preceeder/go.base"
+	"context"
 	"github.com/redis/go-redis/v9"
 )
 
 // ZADD key score1 member1 [score2 member2] , 向有序集合添加一个或多个成员，或者更新已存在成员的分数。
 // return 被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员。
-func (b builder) ZAdd(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZAdd(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZADD, args, includeArgs...)
 }
 
 // ZCARD key , 获取有序集合的成员数
 // return 当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0 。
-func (b builder) ZCard(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZCard(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZCARD, args, includeArgs...)
 }
 
 // ZCOUNT key min max ,计算在有序集合中指定分数区间的成员数   [1,3]
 // return  分数值在 min 和 max 之间的成员的数量。
-func (b builder) ZCount(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZCount(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZCOUNT, args, includeArgs...)
 }
 
@@ -27,7 +27,7 @@ func (b builder) ZCount(ctx base.BaseContext, cmd RdCmd, args map[string]any, in
 // 可以通过传递一个负数值 increment ，让分数减去相应的值，比如 ZINCRBY key -5 member ，就是让 member 的 score 值减去 5 。
 // 当 key 不存在，或分数不是 key 的成员时， ZINCRBY key increment member 等同于 ZADD key increment member 。
 // return member 成员的新分数值，以字符串形式表示。
-func (b builder) ZIncrBy(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZIncrBy(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZINCRBY, args, includeArgs...)
 }
 
@@ -43,7 +43,7 @@ func (b builder) ZIncrBy(ctx base.BaseContext, cmd RdCmd, args map[string]any, i
 // ZLEXCOUNT myzset - + 获取所有的，   - 负无穷， + 正无穷， 结果 7
 // ZLEXCOUNT myzset [b (f    获取包含b不包含f的之间的所有成员数 结果： 4
 // return 指定区间内的成员数量。
-func (b builder) ZLexCount(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZLexCount(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZLEXCOUNT, args, includeArgs...)
 }
 
@@ -54,7 +54,7 @@ func (b builder) ZLexCount(ctx base.BaseContext, cmd RdCmd, args map[string]any,
 // 你也可以使用负数下标，以 -1 表示最后一个成员， -2 表示倒数第二个成员，以此类推。
 // return 指定区间内，带有分数值(可选)的有序集成员的列表。
 // [[key1, score1], [key2, score2], ...]
-func (b builder) ZRange(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRange(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZRANGE, args, includeArgs...)
 }
 
@@ -63,14 +63,14 @@ func (b builder) ZRange(ctx base.BaseContext, cmd RdCmd, args map[string]any, in
 // 具有相同分数值的成员按字典序的逆序(reverse lexicographical order)排列。
 // return 指定区间内，带有分数值(可选)的有序集成员的列表。
 // [[keyn, scoren], [keyn1, scoren1], ...]
-func (b builder) ZRevRange(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRevRange(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREVRANGE, args, includeArgs...)
 }
 
 // ZRANGEBYLEX key min max [LIMIT offset count],  在有序集合（sorted set）中按照字典序（lexicographical order）获取指定范围内的成员。这个命令主要用于那些成员是字符串的有序集合
 // return	 指定区间内的元素列表。
 // 这个的具体解释说明 看菜鸟教程  https://www.runoob.com/redis/sorted-sets-zrangebylex.html
-func (b builder) ZRangeByLex(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRangeByLex(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZRANGEBYLEX, args, includeArgs...)
 }
 
@@ -80,60 +80,60 @@ func (b builder) ZRangeByLex(ctx base.BaseContext, cmd RdCmd, args map[string]an
 // ZRANGEBYSCORE zset (1 5 , 返回所有符合条件 1 < score <= 5 的成员
 // return 指定区间内，带有分数值(可选)的有序集成员的列表。
 // [[key1, score1], [key2, score2], ...]
-func (b builder) ZRangeByScore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRangeByScore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZRANGEBYSCORE, args, includeArgs...)
 }
 
 // ZREVRANGEBYSCORE key max min [WITHSCORES],  返回有序集中指定分数区间内的成员，分数从高到低排序,具有相同分数值的成员按字典序的逆序(reverse lexicographical order )排列。
 // return 指定区间内，带有分数值(可选)的有序集成员的列表。
 // [[keyn, scoren], [keyn1, scoren1], ...]
-func (b builder) ZRevRangeByScore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRevRangeByScore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREVRANGEBYSCORE, args, includeArgs...)
 }
 
 // ZRANK key member , 返回有序集中指定成员的排名。其中有序集成员按分数值递增(从小到大)顺序排列。
 // return 如果成员是有序集 key 的成员，返回 member 的排名。 如果成员不是有序集 key 的成员，返回 nil 。
 // 排名是从0开始的
-func (b builder) ZRank(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRank(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZRANK, args, includeArgs...)
 }
 
 // ZREVRANK key member , 返回有序集合中指定成员的排名，有序集成员按分数值递减(从大到小)排序,  排名以 0 为底，也就是说， 分数值最大的成员排名为 0 。
 // return 如果成员是有序集 key 的成员，返回成员的排名。 如果成员不是有序集 key 的成员，返回 nil 。
-func (b builder) ZRevRank(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRevRank(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREVRANK, args, includeArgs...)
 }
 
 // ZREM key member [member2 ...], 移除有序集合中的一个或多个成员,不存在的成员将被忽略。
 // return 被成功移除的成员的数量，不包括被忽略的成员。
-func (b builder) ZRem(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRem(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREM, args, includeArgs...)
 }
 
 // ZREMRANGEBYLEX key min max,  移除有序集合中给定的字典区间的所有成员。
 // return 被成功移除的成员的数量，不包括被忽略的成员。
 // ZREMRANGEBYLEX myzset [alpha [omega
-func (b builder) ZRemRangeByLex(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRemRangeByLex(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREMRANGEBYLEX, args, includeArgs...)
 }
 
 // ZREMRANGEBYRANK key start stop, 移除有序集中，指定排名(rank)区间内的所有成员。
 // return 被移除成员的数量。
 // ZREMRANGEBYRANK salary 0 1     # 移除下标 0 至 1 区间内的成员
-func (b builder) ZRemRangeByRank(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRemRangeByRank(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREMRANGEBYRANK, args, includeArgs...)
 }
 
 // ZREMRANGEBYSCORE key min max,  移除有序集中，指定分数（score）区间内的所有成员。
 // return 被移除成员的数量。
 // ZREMRANGEBYSCORE salary 1500 3500      # 移除所有薪水在 1500 到 3500 内的员工
-func (b builder) ZRemRangeByScore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZRemRangeByScore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZREMRANGEBYSCORE, args, includeArgs...)
 }
 
 // ZSCORE key member, 返回有序集中，成员的分数值
 // return  成员的分数值，以字符串形式表示。
-func (b builder) ZScore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZScore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZSCORE, args, includeArgs...)
 }
 
@@ -156,27 +156,27 @@ func (b builder) ZScore(ctx base.BaseContext, cmd RdCmd, args map[string]any, in
 //
 // 最终 out 集合的内容是： one: 5, two: 13
 // return  保存到目标结果集的的成员数量。
-func (b builder) ZInterStore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZInterStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZINTERSTORE, args, includeArgs...)
 }
 
 // ZINTER numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]
 // 从redis6.2开始支持， 要注意版本
 // return  [key1, score1, key2, score2, ...]
-func (b builder) ZInter(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZInter(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZINTER, args, includeArgs...)
 }
 
 // ZUNIONSTORE destination numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MIN|MAX],
 // 计算给定的一个或多个有序集的并集，并存储在新的 key 中, 默认情况下，结果集中某个成员的分数值是所有给定集下该成员分数值之和 。
 // return 保存到 destination 的结果集的成员数量。
-func (b builder) ZUnionStore(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZUnionStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZUNIONSTORE, args, includeArgs...)
 }
 
 // ZUNION numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE SUM|MIN|MAX] [WITHSCORES]
 // 从redis6.2开始支持， 要注意版本
 // return  [[key1, score1], [key2, score2], ...]
-func (b builder) ZUnion(ctx base.BaseContext, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) ZUnion(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
 	return b(ctx, cmd, ZUNION, args, includeArgs...)
 }

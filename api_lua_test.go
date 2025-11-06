@@ -1,9 +1,9 @@
 package rdb
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/preceeder/go.base"
 	"testing"
 	"time"
 )
@@ -45,17 +45,17 @@ func Test_getValues(t *testing.T) {
 
 func TestRedisClient_EvalSha(t *testing.T) {
 	client := InitRedis()
-	client.EvalSha(base.Context{}, RkSetUserList.Script, RkSetUserList.Keys, nil)
+	client.EvalSha(context.Background(), RkSetUserList.Script, RkSetUserList.Keys, nil)
 }
 func TestRedisClient_ExecScript(t *testing.T) {
 	client := InitRedis()
-	cmd := client.ZAdd(base.Context{}, ade, nil, 3, 2, 5, 4, 5, 6, 9, 7)
+	cmd := client.ZAdd(context.Background(), ade, nil, 3, 2, 5, 4, 5, 6, 9, 7)
 	if cmd.Err() != nil {
 		fmt.Println(cmd.Err())
 		return
 	}
 	fmt.Println(cmd.Val())
-	cmd = client.ExecScript(base.Context{},
+	cmd = client.ExecScript(context.Background(),
 		RkSetUserList,
 		map[string]string{"paramsKey": "haha"},
 		map[string]any{"userIds": StUserIds{1, 2, 3, 4}, "size": 30, "expireT": 23},
