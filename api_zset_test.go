@@ -3,9 +3,86 @@ package rdb
 import (
 	"context"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"testing"
 	"time"
 )
+
+func requireInt64(t *testing.T, cmd *redis.Cmd) int64 {
+	t.Helper()
+	if err := cmd.Err(); err != nil {
+		t.Fatalf("expected int64 result, got error: %v", err)
+	}
+	val, err := cmd.Result()
+	if err != nil {
+		t.Fatalf("expected int64 result, got error: %v", err)
+	}
+	switch v := val.(type) {
+	case int64:
+		return v
+	case int:
+		return int64(v)
+	default:
+		t.Fatalf("expected int64, got %T", val)
+	}
+	return 0
+}
+
+func requireFloat64(t *testing.T, cmd *redis.Cmd) float64 {
+	t.Helper()
+	if err := cmd.Err(); err != nil {
+		t.Fatalf("expected float64 result, got error: %v", err)
+	}
+	val, err := cmd.Result()
+	if err != nil {
+		t.Fatalf("expected float64 result, got error: %v", err)
+	}
+	switch v := val.(type) {
+	case float64:
+		return v
+	case float32:
+		return float64(v)
+	default:
+		t.Fatalf("expected float64, got %T", val)
+	}
+	return 0
+}
+
+func requireString(t *testing.T, cmd *redis.Cmd) string {
+	t.Helper()
+	if err := cmd.Err(); err != nil {
+		t.Fatalf("expected string result, got error: %v", err)
+	}
+	val, err := cmd.Result()
+	if err != nil {
+		t.Fatalf("expected string result, got error: %v", err)
+	}
+	return fmt.Sprint(val)
+}
+
+func requireStringSlice(t *testing.T, cmd *redis.Cmd) []string {
+	t.Helper()
+	if err := cmd.Err(); err != nil {
+		t.Fatalf("expected string slice result, got error: %v", err)
+	}
+	val, err := cmd.Result()
+	if err != nil {
+		t.Fatalf("expected string slice result, got error: %v", err)
+	}
+	switch v := val.(type) {
+	case []string:
+		return v
+	case []interface{}:
+		result := make([]string, len(v))
+		for i, item := range v {
+			result[i] = fmt.Sprint(item)
+		}
+		return result
+	default:
+		t.Fatalf("expected []string, got %T", val)
+	}
+	return nil
+}
 
 var ade = RdCmd{
 	Key: "haha",
@@ -34,7 +111,7 @@ func TestRedisClient_ZRange(t *testing.T) {
 
 	fmt.Println(cmd.Val())
 	cmd = client.ZRange(context.Background(), ade, map[string]any{"start": 0, "stop": -1})
-	fmt.Println(cmd.Slice())
+	fmt.Println()
 }
 
 // 完整的 ZSet 测试命令定义
@@ -117,13 +194,13 @@ func TestRedisClient_ZAdd(t *testing.T) {
 	defer client.RedisClose()
 
 	cmd := client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test1",
-		"score1":   1.0,
-		"member1":  "member1",
-		"score2":   2.0,
-		"member2":  "member2",
-		"score3":   3.0,
-		"member3":  "member3",
+		"keyName": "test1",
+		"score1":  1.0,
+		"member1": "member1",
+		"score2":  2.0,
+		"member2": "member2",
+		"score3":  3.0,
+		"member3": "member3",
 	})
 
 	if cmd.Err() != nil {
@@ -131,7 +208,7 @@ func TestRedisClient_ZAdd(t *testing.T) {
 		return
 	}
 
-	fmt.Printf("ZADD result: %d members added\n", cmd.Val())
+	fmt.Printf("ZADD result: %v members added\n", cmd.Val())
 }
 
 // TestRedisClient_ZCard 测试 ZCARD 命令
@@ -141,14 +218,14 @@ func TestRedisClient_ZCard(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test2",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   3.0,
-		"member3":  "c",
-	})
+		"keyName": "test2",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  3.0,
+		"member3": "c",
+	}).String()
 
 	// 获取成员数量
 	cmd := client.ZCard(context.Background(), ZSetCmd, map[string]any{
@@ -170,13 +247,13 @@ func TestRedisClient_ZCount(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test3",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   5.0,
-		"member3":  "e",
+		"keyName": "test3",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  5.0,
+		"member3": "e",
 	})
 
 	// 统计分数在 [1, 3] 之间的成员数
@@ -201,13 +278,13 @@ func TestRedisClient_ZRange_New(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test4",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   3.0,
-		"member3":  "c",
+		"keyName": "test4",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  3.0,
+		"member3": "c",
 	})
 
 	// 获取所有成员（按分数升序）
@@ -233,13 +310,13 @@ func TestRedisClient_ZRevRange(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test5",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   3.0,
-		"member3":  "c",
+		"keyName": "test5",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  3.0,
+		"member3": "c",
 	})
 
 	// 获取所有成员（按分数降序）
@@ -265,13 +342,13 @@ func TestRedisClient_ZRangeByScore(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test6",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   5.0,
-		"member3":  "e",
+		"keyName": "test6",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  5.0,
+		"member3": "e",
 	})
 
 	// 获取分数在 [1, 3] 之间的成员
@@ -297,13 +374,13 @@ func TestRedisClient_ZRevRangeByScore(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test7",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   5.0,
-		"member3":  "e",
+		"keyName": "test7",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  5.0,
+		"member3": "e",
 	})
 
 	// 获取分数在 [2, 5] 之间的成员（按分数降序）
@@ -329,13 +406,13 @@ func TestRedisClient_ZRank(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test8",
-		"score1":   10.0,
-		"member1":  "x",
-		"score2":   20.0,
-		"member2":  "y",
-		"score3":   30.0,
-		"member3":  "z",
+		"keyName": "test8",
+		"score1":  10.0,
+		"member1": "x",
+		"score2":  20.0,
+		"member2": "y",
+		"score3":  30.0,
+		"member3": "z",
 	})
 
 	// 获取成员排名（升序）
@@ -359,13 +436,13 @@ func TestRedisClient_ZRevRank(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test9",
-		"score1":   10.0,
-		"member1":  "x",
-		"score2":   20.0,
-		"member2":  "y",
-		"score3":   30.0,
-		"member3":  "z",
+		"keyName": "test9",
+		"score1":  10.0,
+		"member1": "x",
+		"score2":  20.0,
+		"member2": "y",
+		"score3":  30.0,
+		"member3": "z",
 	})
 
 	// 获取成员排名（降序）
@@ -389,11 +466,11 @@ func TestRedisClient_ZScore(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test10",
-		"score1":   25.0,
-		"member1":  "member1",
-		"score2":   50.0,
-		"member2":  "member2",
+		"keyName": "test10",
+		"score1":  25.0,
+		"member1": "member1",
+		"score2":  50.0,
+		"member2": "member2",
 	})
 
 	// 获取成员分数
@@ -417,16 +494,16 @@ func TestRedisClient_ZIncrBy(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test11",
-		"score1":   10.0,
-		"member1":  "member1",
+		"keyName": "test11",
+		"score1":  10.0,
+		"member1": "member1",
 	})
 
 	// 增加分数
 	cmd := client.ZIncrBy(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test11",
+		"keyName":   "test11",
 		"increment": 5.0,
-		"member":   "member1",
+		"member":    "member1",
 	})
 
 	if cmd.Err() != nil {
@@ -444,13 +521,13 @@ func TestRedisClient_ZRem(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test12",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   3.0,
-		"member3":  "c",
+		"keyName": "test12",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  3.0,
+		"member3": "c",
 	})
 
 	// 删除成员
@@ -474,13 +551,13 @@ func TestRedisClient_ZRemRangeByRank(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test13",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
-		"score3":   3.0,
-		"member3":  "c",
+		"keyName": "test13",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
+		"score3":  3.0,
+		"member3": "c",
 	})
 
 	// 删除排名在 [0, 1] 的成员
@@ -505,13 +582,13 @@ func TestRedisClient_ZRemRangeByScore(t *testing.T) {
 
 	// 先添加成员
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test14",
-		"score1":   1.0,
-		"member1":  "m1",
-		"score2":   5.0,
-		"member2":  "m2",
-		"score3":   10.0,
-		"member3":  "m3",
+		"keyName": "test14",
+		"score1":  1.0,
+		"member1": "m1",
+		"score2":  5.0,
+		"member2": "m2",
+		"score3":  10.0,
+		"member3": "m3",
 	})
 
 	// 删除分数在 [2, 9] 之间的成员
@@ -536,13 +613,13 @@ func TestRedisClient_ZLexCount(t *testing.T) {
 
 	// 先添加成员（分数相同，按字典序排列）
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test15",
-		"score1":   0,
-		"member1":  "a",
-		"score2":   0,
-		"member2":  "b",
-		"score3":   0,
-		"member3":  "c",
+		"keyName": "test15",
+		"score1":  0,
+		"member1": "a",
+		"score2":  0,
+		"member2": "b",
+		"score3":  0,
+		"member3": "c",
 	})
 
 	// 统计字典序范围
@@ -567,13 +644,13 @@ func TestRedisClient_ZRemRangeByLex(t *testing.T) {
 
 	// 先添加成员（分数相同）
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "test16",
-		"score1":   0,
-		"member1":  "alpha",
-		"score2":   0,
-		"member2":  "beta",
-		"score3":   0,
-		"member3":  "gamma",
+		"keyName": "test16",
+		"score1":  0,
+		"member1": "alpha",
+		"score2":  0,
+		"member2": "beta",
+		"score3":  0,
+		"member3": "gamma",
 	})
 
 	// 删除字典序范围
@@ -598,23 +675,23 @@ func TestRedisClient_ZInterStore(t *testing.T) {
 
 	// 创建两个有序集合
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "z1",
-		"score1":   1.0,
-		"member1":  "one",
-		"score2":   2.0,
-		"member2":  "two",
-		"score3":   3.0,
-		"member3":  "three",
+		"keyName": "z1",
+		"score1":  1.0,
+		"member1": "one",
+		"score2":  2.0,
+		"member2": "two",
+		"score3":  3.0,
+		"member3": "three",
 	})
 
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "z2",
-		"score1":   1.0,
-		"member1":  "one",
-		"score2":   3.0,
-		"member2":  "two",
-		"score3":   4.0,
-		"member3":  "four",
+		"keyName": "z2",
+		"score1":  1.0,
+		"member1": "one",
+		"score2":  3.0,
+		"member2": "two",
+		"score3":  4.0,
+		"member3": "four",
 	})
 
 	// 计算交集并存储
@@ -642,19 +719,19 @@ func TestRedisClient_ZUnionStore(t *testing.T) {
 
 	// 创建两个有序集合
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "union1",
-		"score1":   1.0,
-		"member1":  "a",
-		"score2":   2.0,
-		"member2":  "b",
+		"keyName": "union1",
+		"score1":  1.0,
+		"member1": "a",
+		"score2":  2.0,
+		"member2": "b",
 	})
 
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  "union2",
-		"score1":   2.0,
-		"member1":  "b",
-		"score2":   3.0,
-		"member2":  "c",
+		"keyName": "union2",
+		"score1":  2.0,
+		"member1": "b",
+		"score2":  3.0,
+		"member2": "c",
 	})
 
 	// 计算并集并存储
@@ -682,13 +759,13 @@ func TestRedisClient_ZSet_Integration(t *testing.T) {
 
 	// 1. ZADD
 	client.ZAdd(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  keyName,
-		"score1":   10.0,
-		"member1":  "member1",
-		"score2":   20.0,
-		"member2":  "member2",
-		"score3":   30.0,
-		"member3":  "member3",
+		"keyName": keyName,
+		"score1":  10.0,
+		"member1": "member1",
+		"score2":  20.0,
+		"member2": "member2",
+		"score3":  30.0,
+		"member3": "member3",
 	})
 
 	// 2. ZCARD
@@ -721,9 +798,9 @@ func TestRedisClient_ZSet_Integration(t *testing.T) {
 
 	// 6. ZINCRBY
 	incrCmd := client.ZIncrBy(context.Background(), ZSetCmd, map[string]any{
-		"keyName":  keyName,
+		"keyName":   keyName,
 		"increment": 5.0,
-		"member":   "member2",
+		"member":    "member2",
 	})
 	fmt.Printf("5. ZINCRBY member2 +5: %s\n", incrCmd.Val())
 
@@ -735,4 +812,3 @@ func TestRedisClient_ZSet_Integration(t *testing.T) {
 	})
 	fmt.Printf("6. ZCOUNT [15,25]: %d\n", countCmd.Val())
 }
-

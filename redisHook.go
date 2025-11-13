@@ -16,9 +16,6 @@ func (RKParesHook) DialHook(next redis.DialHook) redis.DialHook {
 func (RKParesHook) ProcessHook(next redis.ProcessHook) redis.ProcessHook {
 	return func(ctx context.Context, cmd redis.Cmder) error {
 		err := next(ctx, cmd)
-		//if err == redis.Nil {
-		//	return nil
-		//}
 		return err
 	}
 }

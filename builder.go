@@ -12,17 +12,15 @@ import (
 // RedisCmdDef 代表一个 Redis 命令的配置结构体
 type RdSubCmd struct {
 	CmdName        string //真正的 命令名, 当这个存在的时候就不会使用上层map的key作为命令名; 作用是检出同一个key对于同一个命令的不同参数的应对
-	ParamsStr      string // 命令的附属
-	Params         string // TODO 这里的数据 最后都会转化为 字符串数组， 数字也会变成字符串的， 一定要注意下
+	Params         string // 这里的数据 最后都会转化为 字符串数组， 数字也会变成字符串的， 一定要注意下
 	Exp            func() time.Duration
 	DefaultParams  map[string]any // 设置默认的参数
 	NoUseKey       bool           // 不使用外层的key
-	ReturnNilError bool           // 是否返回 redis的nil错误， 这个可以用来判断字段是不是在redis中
+	ReturnNilError bool           // 是否返回 redis的nil错误， 这个可以用来判断字段是不是在redis中， 批量操作的指令是不会有redis.nil错误的
 }
 
 // RedisCmdBuilder 用于构建 Redis 命令的结构体
 type RdCmd struct {
-	DB  string // 这里只是一个标记，没作用
 	Key string
 	CMD map[Command]RdSubCmd
 }

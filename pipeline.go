@@ -20,18 +20,10 @@ func newPipeline(client RedisClient) *RedisPipeline {
 	return &pip
 }
 
-func (pip RedisPipeline) Handler(ctx context.Context, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *redis.Cmd {
-	cmdList, key, subCmd := Build(ctx, cmd, cmdName, args, includeArgs...)
-	resultCmd := pip.Client.Do(ctx, cmdList...)
-	pip.setExp(ctx, key, subCmd)
-	return resultCmd
-}
-
-func (pip RedisPipeline) setExp(ctx context.Context, key string, subCmd RdSubCmd) {
-	if subCmd.Exp != nil {
-		exp := subCmd.Exp()
-		pip.Client.Expire(ctx, key, exp)
-	}
+func (pip RedisPipeline) Handler(ctx context.Context, cmd RdCmd, cmdName Command, args map[string]any, includeArgs ...any) *CommandBuilder {
+	// 返回 CommandBuilder，支持链式调用
+	// Pipeline 中的命令会在 Exec() 时执行
+	return NewPipelineCommandBuilder(pip.Client, ctx, cmd, cmdName, args, includeArgs...)
 }
 
 // 这一步才是真正的执行命令， 之前的所有步骤都是在往数组中添加命令， 实际没有发送到redis中

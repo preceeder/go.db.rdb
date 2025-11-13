@@ -8,20 +8,6 @@ import (
 	"time"
 )
 
-// var client *RedisClient
-//
-//	func init() {
-//		config := Config{
-//			Host:        "127.0.0.1",
-//			Port:        "6377",
-//			Password:    "QDjk9UdkoD6cv",
-//			Db:          0,
-//			MaxIdle:     2,
-//			IdleTimeout: 240,
-//			PoolSize:    13,
-//		}
-//		client = NewRedisClient(config)
-//	}
 func Test_handlerDefaultValue(t *testing.T) {
 	data := map[string]any{
 		"name": 23,
@@ -55,12 +41,12 @@ func TestRedisClient_ExecScript(t *testing.T) {
 		return
 	}
 	fmt.Println(cmd.Val())
-	cmd = client.ExecScript(context.Background(),
+	cmdd := client.ExecScript(context.Background(),
 		RkSetUserList,
 		map[string]string{"paramsKey": "haha"},
 		map[string]any{"userIds": StUserIds{1, 2, 3, 4}, "size": 30, "expireT": 23},
 	)
-	fmt.Println(cmd.Val())
+	fmt.Println(cmdd.Val())
 }
 
 type StUserIds []any

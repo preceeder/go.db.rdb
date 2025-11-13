@@ -2,19 +2,18 @@ package rdb
 
 import (
 	"context"
-	"github.com/redis/go-redis/v9"
 )
 
 //	SADD key member [member ...], 向集合添加一个或多个成员
 //
 // return 被添加到集合中的新元素的数量，不包括被忽略的元素。
-func (b builder) SAdd(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SAdd(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SADD, args, includeArgs...)
 }
 
 // SCARD key, 获取集合的成员数
 // return 集合的数量。 当集合 key 不存在时，返回 0 。
-func (b builder) SCard(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SCard(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SCARD, args, includeArgs...)
 }
 
@@ -24,37 +23,37 @@ func (b builder) SCard(ctx context.Context, cmd RdCmd, args map[string]any, incl
 // key2 = {c}
 // key3 = {a,c,e}
 // SDIFF key1 key2 key3 = {b,d}
-func (b builder) SDiff(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SDiff(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SDIFF, args, includeArgs...)
 }
 
 // SDIFFSTORE destination key [key …] ,给定所有集合的差集并存储在 destination 中, 如果指定的集合 destination 已存在，则会被覆盖。
 // return 结果集中的元素数量。
-func (b builder) SDiffStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SDiffStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SDIFFSTORE, args, includeArgs...)
 }
 
 // SINTER key key1  ...keyn  , 返回给定所有给定集合的交集。 不存在的集合 key 被视为空集。 当给定集合当中有一个空集时，结果也为空集(根据集合运算定律)。
 // return 交集的集合
-func (b builder) SInter(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SInter(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SINTER, args, includeArgs...)
 }
 
 // SINTERSTORE destination key key1 ...,  将给定集合之间的交集存储在指定的集合中。如果指定的集合已经存在，则将其覆盖。
 // return 返回存储交集的集合的元素数量。
-func (b builder) SInterStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SInterStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SINTERSTORE, args, includeArgs...)
 }
 
 // SISMEMBER key member ,  判断member是否存在于key对应的集合中
 // return 如果成员元素是集合的成员，返回 1 。 如果成员元素不是集合的成员，或 key 不存在，返回 0 。
-func (b builder) SIsMember(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SIsMember(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SISMEMBER, args, includeArgs...)
 }
 
 // SMEMBERS key, 返回集合中的所有的成员。 不存在的集合 key 被视为空集合。
 // return 集合中的所有成员。
-func (b builder) SMembers(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SMembers(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SMEMBERS, args, includeArgs...)
 }
 
@@ -63,24 +62,24 @@ func (b builder) SMembers(ctx context.Context, cmd RdCmd, args map[string]any, i
 // 当 destination 集合已经包含 member 元素时， SMOVE 命令只是简单地将 source 集合中的 member 元素删除。
 // 当 source 或 destination 不是集合类型时，返回一个错误。
 // return 如果成员元素被成功移除，返回 1 。 如果成员元素不是 source 集合的成员，并且没有任何操作对 destination 集合执行，那么返回 0 。
-func (b builder) SMove(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SMove(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SMOVE, args, includeArgs...)
 }
 
 // SREM key member1 member2 ... , 移除集合中的一个或多个成员元素，不存在的成员元素会被忽略。
 // return 被成功移除的元素的数量，不包括被忽略的元素。
-func (b builder) SRem(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SRem(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SREM, args, includeArgs...)
 }
 
 // SUNION key key1 key2 ..., 计算给定集合的并集。不存在的集合 key 被视为空集。
 // return 并集成员的列表。
-func (b builder) SUnion(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SUnion(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SUNION, args, includeArgs...)
 }
 
 // SUNIONSTORE destination key [key …], 将给定集合的并集存储在指定的集合 destination 中。如果 destination 已经存在，则将其覆盖。
 // return 结果集中的元素数量。
-func (b builder) SUnionStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *redis.Cmd {
+func (b builder) SUnionStore(ctx context.Context, cmd RdCmd, args map[string]any, includeArgs ...any) *CommandBuilder {
 	return b(ctx, cmd, SUNIONSTORE, args, includeArgs...)
 }

@@ -255,8 +255,8 @@ func TestRedisClient_HIncrBy(t *testing.T) {
 
 	// 增加 5
 	cmd := client.HIncrBy(context.Background(), HashCmd, map[string]any{
-		"keyName":  "test8",
-		"field":   "count",
+		"keyName":   "test8",
+		"field":     "count",
 		"increment": 5,
 	})
 
@@ -282,8 +282,8 @@ func TestRedisClient_HIncrByFloat(t *testing.T) {
 
 	// 增加 2.3
 	cmd := client.HIncrByFloat(context.Background(), HashCmd, map[string]any{
-		"keyName":  "test9",
-		"field":   "score",
+		"keyName":   "test9",
+		"field":     "score",
 		"increment": 2.3,
 	})
 
@@ -444,8 +444,8 @@ func TestRedisClient_Hash_Integration(t *testing.T) {
 
 	// 6. HINCRBY
 	incrCmd := client.HIncrBy(context.Background(), HashCmd, map[string]any{
-		"keyName":  keyName,
-		"field":   "score",
+		"keyName":   keyName,
+		"field":     "score",
 		"increment": 10,
 	})
 	fmt.Printf("4. HINCRBY score +10: %d\n", incrCmd.Val())
@@ -457,4 +457,3 @@ func TestRedisClient_Hash_Integration(t *testing.T) {
 	})
 	fmt.Printf("5. HEXISTS name: %d\n", existsCmd.Val())
 }
-

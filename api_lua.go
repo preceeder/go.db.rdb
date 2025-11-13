@@ -17,7 +17,6 @@ func sha1String(s string) string {
 }
 
 type LuaScript struct {
-	DB      string
 	Script  string
 	Keys    []string
 	Args    []string
@@ -28,7 +27,6 @@ type LuaScript struct {
 // return 给定脚本的 SHA1 校验和
 func (rdm RedisClient) ScriptLoad(ctx context.Context, lua string) string {
 	cmd := rdm.Client.ScriptLoad(ctx, lua)
-	//hesHasScript := cryptor.Sha1(lua)
 	return cmd.Val()
 }
 
@@ -75,7 +73,6 @@ func (rdm RedisClient) ExecScript(ctx context.Context, lua LuaScript, keyInfo ma
 // return 给定脚本的 SHA1 校验和
 func (rdm RedisPipeline) ScriptLoad(ctx context.Context, lua string) string {
 	cmd := rdm.Client.ScriptLoad(ctx, lua)
-	//hesHasScript := cryptor.Sha1(lua)
 	return cmd.Val()
 }
 
@@ -141,19 +138,3 @@ func getValues[T string | any](keyNames []string, keyInfo map[string]T, defaultD
 	}
 	return keys, nil
 }
-
-//func getValues(keyNames []string, keyInfo map[string]any, defaultData map[string]any) []any {
-//	var values []any = make([]any, 0, len(keyNames))
-//	for i, key := range keyNames {
-//		if v, ok := defaultData[key]; ok {
-//			values[i] = v
-//		}
-//
-//		if v, ok := keyInfo[key]; ok {
-//			values[i] = v
-//		} else {
-//			// TODO error 参数缺失
-//		}
-//	}
-//	return values
-//}
